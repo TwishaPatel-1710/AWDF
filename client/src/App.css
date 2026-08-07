@@ -261,3 +261,63 @@ nav a:hover{
 .repo-card a{
     color:blue;
 }
+
+.projects-page,
+.contact-page{
+    width:90%;
+    margin:auto;
+    padding:40px 0;
+    text-align:center;
+}
+
+.project-container{
+    display:flex;
+    gap:30px;
+    justify-content:center;
+    flex-wrap:wrap;
+    margin-top:40px;
+}
+
+.project-card{
+    width:320px;
+    background:white;
+    border-radius:15px;
+    padding:25px;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+    transition:.3s;
+}
+
+.project-card:hover{
+    transform:translateY(-8px);
+}
+
+.project-card h2{
+    color:#0077ff;
+}
+
+.contact-card{
+    width:450px;
+    margin:40px auto;
+    background:white;
+    padding:30px;
+    border-radius:15px;
+    box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+.contact-card input{
+    width:100%;
+    padding:12px;
+    margin:20px 0;
+    border-radius:8px;
+    border:1px solid gray;
+    font-size:16px;
+}
+
+.contact-info{
+    margin-top:25px;
+    text-align:left;
+}
+
+.contact-info p{
+    margin:10px 0;
+}

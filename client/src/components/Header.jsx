@@ -5,7 +5,7 @@ function Header() {
       <h4>COMPUTER ENGINEERING STUDENT</h4>
 
       <h1>
-        Hi, I'm <span>Twisha</span>
+        Hi, I'm <span>Twisha Patel</span>
       </h1>
 
       <p>
