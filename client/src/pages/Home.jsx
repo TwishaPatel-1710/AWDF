@@ -30,9 +30,14 @@ function Home() {
 
       <About />
 
-      <button onClick={() => setShowSkills(!showSkills)}>
-        {showSkills ? "Hide Skills" : "Show Skills"}
-      </button>
+      <section className="skills-toggle">
+        <button
+          className="skills-toggle-btn"
+          onClick={() => setShowSkills(!showSkills)}
+        >
+          {showSkills ? "Hide Skills" : "Show My Skills"}
+        </button>
+      </section>
 
       {showSkills && <Skills skillList={skills} />}
 

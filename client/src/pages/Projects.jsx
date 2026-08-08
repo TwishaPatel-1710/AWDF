@@ -1,47 +1,138 @@
+import { useEffect, useState } from "react";
+import LoadingSpinner from "../components/LoadingSpinner";
+import ErrorMessage from "../components/ErrorMessage";
+
 function Projects() {
-  const projects = [
-    {
-      title: "Portfolio Website",
-      tech: "React, CSS",
-      desc: "A responsive personal portfolio showcasing my skills, education and projects."
-    },
-    {
-      title: "Car Rental System",
-      tech: "React, Node.js, Express, MongoDB",
-      desc: "A full-stack web application for booking rental cars with login and booking management."
-    },
-    {
-      title: "SmartNotes with Categories",
-      tech: "MERN Stack",
-      desc: "A smart note taking website that includes categorization and advanced arrangement."
-    },
-    {
-      title: "Expense Tracker",
-      tech: "MERN Stack",
-      desc: "A smart system where user can manage their expenses and can see weekly , monthly reports."
-    }
-  ];
+  const [repositories, setRepositories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    const fetchRepositories = async () => {
+      try {
+        const response = await fetch(
+          "https://api.github.com/users/TwishaPatel-1710/repos"
+        );
+
+        if (!response.ok) {
+          throw new Error("Failed to fetch repositories");
+        }
+
+        const data = await response.json();
+
+        setRepositories(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRepositories();
+  }, []);
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
+
+  if (error) {
+    return <ErrorMessage message={error} />;
+  }
 
   return (
     <div className="projects-page">
-      <h1>My Projects</h1>
-      <p>Some of the projects I have worked on.</p>
 
+      {/* Projects Header */}
+      <div className="projects-header">
+
+        <span className="projects-label">
+          MY WORK
+        </span>
+
+        <h1>
+          Projects I've <span>Built</span>
+        </h1>
+
+        <p>
+          A collection of projects where I explore web development,
+          APIs, React, and modern technologies.
+        </p>
+
+      </div>
+
+
+      {/* Projects */}
       <div className="project-container">
-        {projects.map((project, index) => (
-          <div className="project-card" key={index}>
-            <h2>{project.title}</h2>
 
-            <h4>Technology Used</h4>
+        {repositories.map((repo, index) => (
+          <div className="project-card" key={repo.id}>
 
-            <p>{project.tech}</p>
+            {/* Card Top */}
+            <div className="project-top">
 
-            <h4>Description</h4>
+              <span className="project-number">
+                {String(index + 1).padStart(2, "0")}
+              </span>
 
-            <p>{project.desc}</p>
+              <span className="project-type">
+                REPOSITORY
+              </span>
+
+            </div>
+
+
+            {/* Project Name */}
+            <h2>{repo.name}</h2>
+
+
+            {/* Description */}
+            <p>
+              {repo.description ||
+                "A project developed as part of my learning and development journey."}
+            </p>
+
+
+            {/* Technologies */}
+            <div className="project-tech">
+
+              <span>
+                {repo.language || "React"}
+              </span>
+
+              <span>
+                GitHub
+              </span>
+
+            </div>
+
+
+            {/* Buttons */}
+            <div className="project-actions">
+
+              <a
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                GitHub ↗
+              </a>
+
+              <a
+                href={repo.html_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="demo-btn"
+              >
+                View Project ↗
+              </a>
+
+            </div>
+
           </div>
         ))}
+
       </div>
+
     </div>
   );
 }

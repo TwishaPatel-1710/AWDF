@@ -1,27 +1,47 @@
-function Header() {
-  return (
-    <div className="left">
+import { useNavigate } from "react-router-dom";
 
-      <h4>COMPUTER ENGINEERING STUDENT</h4>
+function Header() {
+  const navigate = useNavigate();
+
+  return (
+    <section className="header-content">
+
+      <p className="subtitle">
+        COMPUTER ENGINEERING STUDENT
+      </p>
 
       <h1>
         Hi, I'm <span>Twisha Patel</span>
       </h1>
 
-      <p>
-        I love creating modern websites using
-        React and learning Artificial Intelligence.
+      <h2>
+        Aspiring Software Developer
+      </h2>
+
+      <p className="intro">
+        I enjoy building modern web applications using React
+        and exploring the world of Artificial Intelligence.
       </p>
 
-      <button className="btn1">
-        View Projects
-      </button>
+      <div className="header-buttons">
 
-      <button className="btn2">
-        Contact Me
-      </button>
+        <button
+          className="btn-primary"
+          onClick={() => navigate("/projects")}
+        >
+          View Projects
+        </button>
 
-    </div>
+        <button
+          className="btn-secondary"
+          onClick={() => navigate("/contact")}
+        >
+          Contact Me
+        </button>
+
+      </div>
+
+    </section>
   );
 }
 

@@ -1,11 +1,21 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
 function NavBar() {
   return (
-    <nav style={{ padding: "20px", display: "flex", gap: "20px" }}>
-      <Link to="/">Home</Link>
-      <Link to="/projects">Projects</Link>
-      <Link to="/contact">Contact</Link>
+    <nav className="navbar">
+      <div className="nav-container">
+
+        <NavLink to="/" className="logo">
+          <span>Twisha Patel</span>
+        </NavLink>
+
+        <div className="nav-links">
+          <NavLink to="/">Home</NavLink>
+          <NavLink to="/projects">Projects</NavLink>
+          <NavLink to="/contact">Contact</NavLink>
+        </div>
+
+      </div>
     </nav>
   );
 }

@@ -1,32 +1,147 @@
 import { useState } from "react";
 
 function Contact() {
-  const [name, setName] = useState("");
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    message: "",
+  });
+
+  const [submitted, setSubmitted] = useState(false);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log("Message submitted:", formData);
+
+    setSubmitted(true);
+
+    setFormData({
+      name: "",
+      email: "",
+      message: "",
+    });
+  };
 
   return (
     <div className="contact-page">
 
-      <h1>Contact Me</h1>
+      <h1>Let's Connect</h1>
 
-      <p>
-        Feel free to reach out for internships, collaborations or project discussions.
+      <p className="contact-intro">
+        Have a project, opportunity, or just want to say hello?
+        Feel free to get in touch with me.
       </p>
 
-      <div className="contact-card">
+      <div className="contact-container">
 
-        <input
-          type="text"
-          placeholder="Enter Your Name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-
-        <h3>Hello, {name || "Guest"} 👋</h3>
-
+        {/* Contact Details */}
         <div className="contact-info">
-          <p>📧 twishapatel031@gmail.com</p>
-          <p>📱 +91 8154877562</p>
-          <p>📍 Gujarat, India</p>
+
+          <h2>Get In Touch</h2>
+
+          <p>
+            I'm always open to discussing new projects,
+            opportunities and ideas.
+          </p>
+
+          <div className="contact-detail">
+            <span>📧</span>
+            <div>
+              <h3>Email</h3>
+              <a href="mailto:YOUR_EMAIL@gmail.com">
+                YOUR_EMAIL@gmail.com
+              </a>
+            </div>
+          </div>
+
+          <div className="contact-detail">
+            <span>💻</span>
+            <div>
+              <h3>GitHub</h3>
+              <a
+                href="https://github.com/YOUR_USERNAME"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                github.com/YOUR_USERNAME
+              </a>
+            </div>
+          </div>
+
+          <div className="contact-detail">
+            <span>🔗</span>
+            <div>
+              <h3>LinkedIn</h3>
+              <a
+                href="https://www.linkedin.com/in/YOUR_USERNAME"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                linkedin.com/in/YOUR_USERNAME
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+
+        {/* Contact Form */}
+        <div className="contact-card">
+
+          <h2>Send Me a Message</h2>
+
+          <p>
+            Fill out the form and I'll get back to you.
+          </p>
+
+          <form onSubmit={handleSubmit}>
+
+            <input
+              type="text"
+              name="name"
+              placeholder="Your Name"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+
+            <input
+              type="email"
+              name="email"
+              placeholder="Your Email"
+              value={formData.email}
+              onChange={handleChange}
+              required
+            />
+
+            <textarea
+              name="message"
+              placeholder="Your Message"
+              value={formData.message}
+              onChange={handleChange}
+              required
+            />
+
+            <button type="submit">
+              Send Message
+            </button>
+
+          </form>
+
+          {submitted && (
+            <p className="success-message">
+              ✓ Message submitted successfully!
+            </p>
+          )}
+
         </div>
 
       </div>

@@ -1,11 +1,15 @@
-function Skills(props) {
+function Skills({ skillList }) {
   return (
-    <section>
-      <h2>Skills</h2>
+    <section className="skills">
+      <h2>My Skills</h2>
 
-      <div className="skill-grid">
-        {props.skillList.map((skill,index)=>(
-          <div className="skill" key={index}>
+      <p className="skills-intro">
+        Technologies and tools I use to build modern applications.
+      </p>
+
+      <div className="skills-container">
+        {skillList.map((skill, index) => (
+          <div className="skill-card" key={index}>
             {skill}
           </div>
         ))}
