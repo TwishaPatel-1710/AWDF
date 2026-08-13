@@ -57,7 +57,7 @@ function Contact() {
             <div>
               <h3>Email</h3>
               <a href="mailto:YOUR_EMAIL@gmail.com">
-                YOUR_EMAIL@gmail.com
+                pateltwisha031@gmail.com
               </a>
             </div>
           </div>
@@ -67,11 +67,11 @@ function Contact() {
             <div>
               <h3>GitHub</h3>
               <a
-                href="https://github.com/YOUR_USERNAME"
+                href="https://github.com/TwishaPate-1710"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                github.com/YOUR_USERNAME
+                github.com/TwishaPatel-1710
               </a>
             </div>
           </div>
@@ -81,11 +81,11 @@ function Contact() {
             <div>
               <h3>LinkedIn</h3>
               <a
-                href="https://www.linkedin.com/in/YOUR_USERNAME"
+                href="https://www.linkedin.com/in/Twisha Patel"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                linkedin.com/in/YOUR_USERNAME
+                linkedin.com/in/Twisha Patel
               </a>
             </div>
           </div>
