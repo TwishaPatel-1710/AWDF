@@ -1499,3 +1499,61 @@ footer span {
   }
 
 }
+
+section {
+  padding: 30px;
+}
+
+section h2 {
+  color: #172033;
+  margin-bottom: 20px;
+}
+
+.repo-card {
+  background: white;
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.repo-card h3 {
+  color: #172033;
+  margin-bottom: 10px;
+}
+
+.repo-card p {
+  margin: 8px 0;
+}
+
+.repo-card input {
+  padding: 10px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn1,
+.btn2 {
+  padding: 10px 18px;
+  margin: 8px 5px 5px 0;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.btn1 {
+  background: #ff7518;
+  color: white;
+}
+
+.btn2 {
+  background: #172033;
+  color: white;
+}
+
+.btn1:disabled,
+.btn2:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

@@ -1,140 +1,317 @@
 import { useEffect, useState } from "react";
-import LoadingSpinner from "../components/LoadingSpinner";
-import ErrorMessage from "../components/ErrorMessage";
 
 function Projects() {
-  const [repositories, setRepositories] = useState([]);
+
+  const [tasks, setTasks] = useState([]);
+
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+
   const [loading, setLoading] = useState(true);
+  const [actionLoading, setActionLoading] = useState(false);
+
   const [error, setError] = useState("");
 
-  useEffect(() => {
-    const fetchRepositories = async () => {
-      try {
-        const response = await fetch(
-          "https://api.github.com/users/TwishaPatel-1710/repos"
-        );
+  const [editingId, setEditingId] = useState(null);
 
-        if (!response.ok) {
-          throw new Error("Failed to fetch repositories");
-        }
 
-        const data = await response.json();
+  async function fetchTasks() {
 
-        setRepositories(data);
-      } catch (err) {
-        setError(err.message);
-      } finally {
-        setLoading(false);
+    try {
+
+      setLoading(true);
+      setError("");
+
+      const response = await fetch(
+        "http://localhost:5000/tasks"
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch tasks");
       }
-    };
 
-    fetchRepositories();
+      const data = await response.json();
+
+      setTasks(data);
+
+    } catch (err) {
+
+      setError(err.message);
+
+    } finally {
+
+      setLoading(false);
+
+    }
+
+  }
+
+
+  useEffect(() => {
+
+    fetchTasks();
+
   }, []);
 
-  if (loading) {
-    return <LoadingSpinner />;
+
+  async function handleSubmit(e) {
+
+    e.preventDefault();
+
+    try {
+
+      setActionLoading(true);
+      setError("");
+
+      const url = editingId
+        ? `http://localhost:5000/tasks/${editingId}`
+        : "http://localhost:5000/tasks";
+
+      const method = editingId ? "PUT" : "POST";
+
+
+      const response = await fetch(url, {
+
+        method: method,
+
+        headers: {
+          "Content-Type": "application/json"
+        },
+
+        body: JSON.stringify({
+          title: title,
+          description: description
+        })
+
+      });
+
+
+      const data = await response.json();
+
+
+      if (!response.ok) {
+
+        if (data.errors) {
+
+          throw new Error(
+            Object.values(data.errors).join(", ")
+          );
+
+        }
+
+        throw new Error(
+          data.message || "Request failed"
+        );
+
+      }
+
+
+      setTitle("");
+      setDescription("");
+      setEditingId(null);
+
+      await fetchTasks();
+
+    } catch (err) {
+
+      setError(err.message);
+
+    } finally {
+
+      setActionLoading(false);
+
+    }
+
   }
 
-  if (error) {
-    return <ErrorMessage message={error} />;
+
+  function handleEdit(task) {
+
+    setEditingId(task._id);
+
+    setTitle(task.title);
+
+    setDescription(task.description || "");
+
   }
+
+
+  async function handleDelete(id) {
+
+    try {
+
+      setActionLoading(true);
+      setError("");
+
+      const response = await fetch(
+        `http://localhost:5000/tasks/${id}`,
+        {
+          method: "DELETE"
+        }
+      );
+
+
+      const data = await response.json();
+
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.message || "Delete failed"
+        );
+
+      }
+
+
+      await fetchTasks();
+
+    } catch (err) {
+
+      setError(err.message);
+
+    } finally {
+
+      setActionLoading(false);
+
+    }
+
+  }
+
+
+  if (loading) {
+    return <p>Loading...</p>;
+  }
+
 
   return (
-    <div className="projects-page">
 
-      {/* Projects Header */}
-      <div className="projects-header">
+    <section>
 
-        <span className="projects-label">
-          MY WORK
-        </span>
+      <h2>Projects</h2>
 
-        <h1>
-          Projects I've <span>Built</span>
-        </h1>
+      {error && <p>{error}</p>}
 
-        <p>
-          A collection of projects where I explore web development,
-          APIs, React, and modern technologies.
-        </p>
+
+      <div className="repo-card">
+
+        <h3>
+          {editingId ? "Edit Task" : "Add Task"}
+        </h3>
+
+
+        <form onSubmit={handleSubmit}>
+
+          <input
+            type="text"
+            placeholder="Enter task title"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+          />
+
+
+          <input
+            type="text"
+            placeholder="Enter task description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+          />
+
+
+          <br />
+
+
+          <button
+            type="submit"
+            className="btn1"
+            disabled={actionLoading}
+          >
+            {actionLoading
+              ? "Processing..."
+              : editingId
+                ? "Update Task"
+                : "Add Task"}
+          </button>
+
+
+          {editingId && (
+
+            <button
+              type="button"
+              className="btn2"
+              onClick={() => {
+
+                setEditingId(null);
+                setTitle("");
+                setDescription("");
+
+              }}
+            >
+              Cancel
+            </button>
+
+          )}
+
+        </form>
 
       </div>
 
 
-      {/* Projects */}
-      <div className="project-container">
+      {tasks.length === 0 ? (
 
-        {repositories.map((repo, index) => (
-          <div className="project-card" key={repo.id}>
+        <div className="repo-card">
 
-            {/* Card Top */}
-            <div className="project-top">
+          <p>No tasks found.</p>
 
-              <span className="project-number">
-                {String(index + 1).padStart(2, "0")}
-              </span>
+        </div>
 
-              <span className="project-type">
-                REPOSITORY
-              </span>
+      ) : (
 
-            </div>
+        tasks.map((task) => (
 
+          <div
+            className="repo-card"
+            key={task._id}
+          >
 
-            {/* Project Name */}
-            <h2>{repo.name}</h2>
+            <h3>{task.title}</h3>
 
+            <p>{task.description}</p>
 
-            {/* Description */}
             <p>
-              {repo.description ||
-                "A project developed as part of my learning and development journey."}
+              Status:{" "}
+              {task.completed
+                ? "Completed"
+                : "Pending"}
             </p>
 
 
-            {/* Technologies */}
-            <div className="project-tech">
-
-              <span>
-                {repo.language || "React"}
-              </span>
-
-              <span>
-                GitHub
-              </span>
-
-            </div>
+            <button
+              className="btn1"
+              onClick={() => handleEdit(task)}
+              disabled={actionLoading}
+            >
+              Edit
+            </button>
 
 
-            {/* Buttons */}
-            <div className="project-actions">
-
-              <a
-                href={repo.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                GitHub ↗
-              </a>
-
-              <a
-                href={repo.html_url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="demo-btn"
-              >
-                View Project ↗
-              </a>
-
-            </div>
+            <button
+              className="btn2"
+              onClick={() => handleDelete(task._id)}
+              disabled={actionLoading}
+            >
+              Delete
+            </button>
 
           </div>
-        ))}
 
-      </div>
+        ))
 
-    </div>
+      )}
+
+    </section>
+
   );
+
 }
 
 export default Projects;
