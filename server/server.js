@@ -5,6 +5,8 @@ const cors = require("cors");
 const mongoose = require("mongoose");
 
 const taskRoutes = require("./routes/taskRoutes");
+const authRoutes = require("./routes/authRoutes");
+
 const logger = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -17,6 +19,8 @@ app.use(express.json());
 
 app.use(logger);
 
+app.use("/auth", authRoutes);
+
 app.use("/tasks", taskRoutes);
 
 app.use(errorHandler);
@@ -24,12 +28,19 @@ app.use(errorHandler);
 mongoose
   .connect(process.env.MONGO_URI)
   .then(() => {
+
     console.log("MongoDB connected");
 
     app.listen(PORT, () => {
       console.log(`Server running on http://localhost:${PORT}`);
     });
+
   })
   .catch((error) => {
-    console.error("MongoDB connection failed:", error.message);
+
+    console.error(
+      "MongoDB connection failed:",
+      error.message
+    );
+
   });
