@@ -14,8 +14,23 @@ function Projects() {
 
   const [editingId, setEditingId] = useState(null);
 
+  const [token, setToken] = useState(
+    localStorage.getItem("token")
+  );
+
+  const [showRegister, setShowRegister] = useState(false);
+
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
 
   async function fetchTasks() {
+
+    if (!token) {
+      setLoading(false);
+      return;
+    }
 
     try {
 
@@ -23,14 +38,23 @@ function Projects() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/tasks"
+        "http://localhost:5000/tasks",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch tasks");
-      }
-
       const data = await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.message || "Failed to fetch tasks"
+        );
+
+      }
 
       setTasks(data);
 
@@ -51,7 +75,136 @@ function Projects() {
 
     fetchTasks();
 
-  }, []);
+  }, [token]);
+
+
+  async function handleRegister(e) {
+
+    e.preventDefault();
+
+    try {
+
+      setActionLoading(true);
+      setError("");
+
+      const response = await fetch(
+        "http://localhost:5000/auth/register",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            password: password
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.message || "Registration failed"
+        );
+
+      }
+
+      setName("");
+      setEmail("");
+      setPassword("");
+
+      setShowRegister(false);
+
+      setError("");
+
+    } catch (err) {
+
+      setError(err.message);
+
+    } finally {
+
+      setActionLoading(false);
+
+    }
+
+  }
+
+
+  async function handleLogin(e) {
+
+    e.preventDefault();
+
+    try {
+
+      setActionLoading(true);
+      setError("");
+
+      const response = await fetch(
+        "http://localhost:5000/auth/login",
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "application/json"
+          },
+
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        }
+      );
+
+      const data = await response.json();
+
+      if (!response.ok) {
+
+        throw new Error(
+          data.message || "Login failed"
+        );
+
+      }
+
+      localStorage.setItem(
+        "token",
+        data.token
+      );
+
+      setToken(data.token);
+
+      setEmail("");
+      setPassword("");
+
+    } catch (err) {
+
+      setError(err.message);
+
+    } finally {
+
+      setActionLoading(false);
+
+    }
+
+  }
+
+
+  function handleLogout() {
+
+    localStorage.removeItem("token");
+
+    setToken(null);
+    setTasks([]);
+    setEditingId(null);
+
+    setTitle("");
+    setDescription("");
+
+  }
 
 
   async function handleSubmit(e) {
@@ -67,23 +220,27 @@ function Projects() {
         ? `http://localhost:5000/tasks/${editingId}`
         : "http://localhost:5000/tasks";
 
-      const method = editingId ? "PUT" : "POST";
+      const method = editingId
+        ? "PUT"
+        : "POST";
 
 
-      const response = await fetch(url, {
+      const response = await fetch(
+        url,
+        {
+          method: method,
 
-        method: method,
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`
+          },
 
-        headers: {
-          "Content-Type": "application/json"
-        },
-
-        body: JSON.stringify({
-          title: title,
-          description: description
-        })
-
-      });
+          body: JSON.stringify({
+            title: title,
+            description: description
+          })
+        }
+      );
 
 
       const data = await response.json();
@@ -131,7 +288,9 @@ function Projects() {
 
     setTitle(task.title);
 
-    setDescription(task.description || "");
+    setDescription(
+      task.description || ""
+    );
 
   }
 
@@ -146,7 +305,11 @@ function Projects() {
       const response = await fetch(
         `http://localhost:5000/tasks/${id}`,
         {
-          method: "DELETE"
+          method: "DELETE",
+
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
         }
       );
 
@@ -179,7 +342,125 @@ function Projects() {
 
 
   if (loading) {
-    return <p>Loading...</p>;
+
+    return (
+      <section>
+        <h2>Projects</h2>
+        <p>Loading...</p>
+      </section>
+    );
+
+  }
+
+
+  if (!token) {
+
+    return (
+
+      <section>
+
+        <h2>Projects</h2>
+
+        {error && (
+          <p>{error}</p>
+        )}
+
+
+        <div className="repo-card">
+
+          <h3>
+            {showRegister
+              ? "Register"
+              : "Login"}
+          </h3>
+
+
+          <form
+            onSubmit={
+              showRegister
+                ? handleRegister
+                : handleLogin
+            }
+          >
+
+            {showRegister && (
+
+              <input
+                type="text"
+                placeholder="Enter your name"
+                value={name}
+                onChange={(e) =>
+                  setName(e.target.value)
+                }
+                required
+              />
+
+            )}
+
+
+            <input
+              type="email"
+              placeholder="Enter email"
+              value={email}
+              onChange={(e) =>
+                setEmail(e.target.value)
+              }
+              required
+            />
+
+
+            <input
+              type="password"
+              placeholder="Enter password"
+              value={password}
+              onChange={(e) =>
+                setPassword(e.target.value)
+              }
+              required
+            />
+
+
+            <br />
+
+
+            <button
+              type="submit"
+              className="btn1"
+              disabled={actionLoading}
+            >
+              {actionLoading
+                ? "Processing..."
+                : showRegister
+                  ? "Register"
+                  : "Login"}
+            </button>
+
+          </form>
+
+
+          <br />
+
+
+          <button
+            className="btn2"
+            onClick={() => {
+
+              setShowRegister(!showRegister);
+              setError("");
+
+            }}
+          >
+            {showRegister
+              ? "Go to Login"
+              : "Create Account"}
+          </button>
+
+        </div>
+
+      </section>
+
+    );
+
   }
 
 
@@ -189,13 +470,26 @@ function Projects() {
 
       <h2>Projects</h2>
 
-      {error && <p>{error}</p>}
+
+      {error && (
+        <p>{error}</p>
+      )}
+
+
+      <button
+        className="btn2"
+        onClick={handleLogout}
+      >
+        Logout
+      </button>
 
 
       <div className="repo-card">
 
         <h3>
-          {editingId ? "Edit Task" : "Add Task"}
+          {editingId
+            ? "Edit Task"
+            : "Add Task"}
         </h3>
 
 
@@ -205,7 +499,9 @@ function Projects() {
             type="text"
             placeholder="Enter task title"
             value={title}
-            onChange={(e) => setTitle(e.target.value)}
+            onChange={(e) =>
+              setTitle(e.target.value)
+            }
           />
 
 
@@ -213,7 +509,9 @@ function Projects() {
             type="text"
             placeholder="Enter task description"
             value={description}
-            onChange={(e) => setDescription(e.target.value)}
+            onChange={(e) =>
+              setDescription(e.target.value)
+            }
           />
 
 
@@ -273,9 +571,15 @@ function Projects() {
             key={task._id}
           >
 
-            <h3>{task.title}</h3>
+            <h3>
+              {task.title}
+            </h3>
 
-            <p>{task.description}</p>
+
+            <p>
+              {task.description}
+            </p>
+
 
             <p>
               Status:{" "}
@@ -287,7 +591,9 @@ function Projects() {
 
             <button
               className="btn1"
-              onClick={() => handleEdit(task)}
+              onClick={() =>
+                handleEdit(task)
+              }
               disabled={actionLoading}
             >
               Edit
@@ -296,7 +602,9 @@ function Projects() {
 
             <button
               className="btn2"
-              onClick={() => handleDelete(task._id)}
+              onClick={() =>
+                handleDelete(task._id)
+              }
               disabled={actionLoading}
             >
               Delete
