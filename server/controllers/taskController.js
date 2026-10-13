@@ -1,3 +1,6 @@
+const taskEvents = require("../events/taskEvents");
+require("../events/taskNotification");
+
 
 const Task = require("../models/Task");
 const cache = require("../utils/cache");
@@ -27,18 +30,34 @@ async function getAllTasks(req, res, next) {
   }
 }
 
+
 async function createTask(req, res, next) {
   try {
     const task = await Task.create(req.body);
 
-    // Invalidate cached tasks after successful creation.
+    // Invalidate the Practical 9 cache.
     cache.del(CACHE_KEY);
 
-    res.status(201).json(task);
+    const taskData = {
+      title: task.title,
+      assignedUser: req.user?.userId || "Unknown",
+      createdAt: new Date().toISOString()
+    };
+
+    console.log("API response point:", new Date().toISOString());
+
+    // Schedule the notification event without waiting for its handler.
+    setImmediate(() => {
+      taskEvents.emit("task-created", taskData);
+    });
+
+    // Return the response without waiting for notification processing.
+    return res.status(201).json(task);
   } catch (error) {
     next(error);
   }
 }
+
 
 async function updateTask(req, res, next) {
   try {
