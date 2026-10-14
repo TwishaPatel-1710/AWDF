@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
 
+const API_URL = import.meta.env.VITE_API_URL || "http://localhost:5000";
+
+
 function Projects() {
 
   const [tasks, setTasks] = useState([]);
@@ -38,7 +41,7 @@ function Projects() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/tasks",
+        `${API_URL}/tasks`,
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -88,7 +91,7 @@ function Projects() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/auth/register",
+        `${API_URL}/auth/register`,
         {
           method: "POST",
 
@@ -145,7 +148,7 @@ function Projects() {
       setError("");
 
       const response = await fetch(
-        "http://localhost:5000/auth/login",
+        `${API_URL}/auth/login`,
         {
           method: "POST",
 
@@ -217,8 +220,8 @@ function Projects() {
       setError("");
 
       const url = editingId
-        ? `http://localhost:5000/tasks/${editingId}`
-        : "http://localhost:5000/tasks";
+        ? `${API_URL}/tasks/${editingId}`
+        : `${API_URL}/tasks`;
 
       const method = editingId
         ? "PUT"
@@ -303,7 +306,7 @@ function Projects() {
       setError("");
 
       const response = await fetch(
-        `http://localhost:5000/tasks/${id}`,
+        `${API_URL}/tasks/${id}`,
         {
           method: "DELETE",
 
