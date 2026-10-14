@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 
 const taskRoutes = require("./routes/taskRoutes");
 const authRoutes = require("./routes/authRoutes");
+const aiRoutes = require("./routes/aiRoutes");
 
 const logger = require("./middleware/logger");
 const errorHandler = require("./middleware/errorHandler");
@@ -22,6 +23,8 @@ app.use(logger);
 app.use("/auth", authRoutes);
 
 app.use("/tasks", taskRoutes);
+
+app.use("/api/ai", aiRoutes);
 
 app.use(errorHandler);
 

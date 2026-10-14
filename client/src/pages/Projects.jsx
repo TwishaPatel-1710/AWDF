@@ -9,6 +9,7 @@ function Projects() {
 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+  const [aiLoading, setAiLoading] = useState(false);
 
   const [loading, setLoading] = useState(true);
   const [actionLoading, setActionLoading] = useState(false);
@@ -285,6 +286,48 @@ function Projects() {
   }
 
 
+
+  
+async function handleGenerateDescription() {
+  if (!title.trim()) {
+    setError("Please enter a task title first.");
+    return;
+  }
+
+  try {
+    setAiLoading(true);
+    setError("");
+
+    const response = await fetch(
+      `${API_URL}/api/ai/generate-description`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ title: title.trim() }),
+      }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(
+        data.message || "Failed to generate description."
+      );
+    }
+
+    setDescription(data.description);
+  } catch (err) {
+    setError(err.message || "Unable to generate description.");
+  } finally {
+    setAiLoading(false);
+  }
+}
+
+
+
   function handleEdit(task) {
 
     setEditingId(task._id);
@@ -516,6 +559,19 @@ function Projects() {
               setDescription(e.target.value)
             }
           />
+
+	
+<button
+  type="button"
+  className="btn2"
+  onClick={handleGenerateDescription}
+  disabled={aiLoading || actionLoading}
+>
+  {aiLoading
+    ? "Generating..."
+    : "Generate Description with AI"}
+</button>
+
 
 
           <br />
